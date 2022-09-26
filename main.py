@@ -17,7 +17,7 @@ def get_max_digit(elements):
   return max(digits)
   
 # given url to dappradar, finds number of dapps for that crypto
-def get_num_dapps(crypto_code):
+def get_num_dapps(crypto_code, dict):
   # create driver
   chrome_options = Options()
   # chrome_options.add_argument("--headless")
@@ -39,9 +39,10 @@ def get_num_dapps(crypto_code):
   # remove driver and return
   driver.close()
   driver.quit()
-  return num
+  dict[crypto_code] = num
+  return
 
-def get_used_dapps(crypto_code):
+def get_used_dapps(crypto_code, dict):
   # create driver
   chrome_options = Options()
   # chrome_options.add_argument("--headless")
@@ -73,12 +74,52 @@ def get_used_dapps(crypto_code):
   # remove driver and return
   driver.close()
   driver.quit()
-  return num
+  dict[crypto_code] = num
+  return
 
-solana = get_used_dapps('solana')
-print(solana)
+# run threads recursively in groups of 7
+def run_threads(threads):
+  if len(threads) < 7:
+    # base case, run all
+    for thread in threads:
+      thread.start()
+    for thread in threads:
+      thread.join()
+    return
+  else:
+    # run 8, then recurse on remaining
+    for i in range(7):
+      threads[i].start()
+    for i in range(7):
+      threads[i].join()
+    run_threads(threads[7:])
 
+# input and output to threads
+crypto_codes = [
+  "ethereum",
+  "solana",
+  "avalanche",
+  "binance-smart-chain",
+  "tron",
+  "algorand",
+  "near",
+  "flow",
+  "polygon",
+  "tezos",
+  "eos",
+  "harmony",
+  "fantom",
+]
+dict_all = {}
+dict_used = {}
 
+# create threads and run with helper function
+threads = []
+for code in crypto_codes:
+  threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
+  threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
+run_threads(threads)
 
-
-
+# print output
+print(dict_all)
+print(dict_used)
