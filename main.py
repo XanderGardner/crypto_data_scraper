@@ -57,7 +57,7 @@ def get_used_dapps(crypto_code, dict):
   filter_btn.click()
   apply_btn = WebDriverWait(driver, 12).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.bxXfRK")))
   apply_btn.click()
-  time.sleep(1.0) # wait for filter to be applied
+  time.sleep(2.0) # wait for filter to be applied
 
   nav_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
   last_page = get_max_digit(nav_els)
