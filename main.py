@@ -46,6 +46,7 @@ def get_used_dapps(crypto_code, dict):
   # create driver
   chrome_options = Options()
   # chrome_options.add_argument("--headless")
+  chrome_options.add_argument("--enable-javascript") # needed to load correct end page for >1 user
   chrome_service = ChromeService(ChromeDriverManager().install())
   driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
   driver.maximize_window()
@@ -57,6 +58,7 @@ def get_used_dapps(crypto_code, dict):
   apply_btn = WebDriverWait(driver, 12).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.bxXfRK")))
   apply_btn.click()
   time.sleep(1.0) # wait for filter to be applied
+
   nav_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
   last_page = get_max_digit(nav_els)
 
@@ -95,28 +97,29 @@ def run_threads(threads):
     run_threads(threads[7:])
 
 # input and output to threads
-crypto_codes = [
-  "ethereum",
-  "solana",
-  "avalanche",
-  "binance-smart-chain",
-  "tron",
-  "algorand",
-  "near",
-  "flow",
-  "polygon",
-  "tezos",
-  "eos",
-  "harmony",
-  "fantom",
-]
+# crypto_codes = [
+#   "ethereum",
+#   "solana",
+#   "avalanche",
+#   "binance-smart-chain",
+#   "tron",
+#   "algorand",
+#   "near",
+#   "flow",
+#   "polygon",
+#   "tezos",
+#   "eos",
+#   "harmony",
+#   "fantom"
+# ]
+crypto_codes = ["ethereum"]
 dict_all = {}
 dict_used = {}
 
 # create threads and run with helper function
 threads = []
 for code in crypto_codes:
-  threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
+  # threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
   threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
 run_threads(threads)
 
