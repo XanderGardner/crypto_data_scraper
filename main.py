@@ -120,7 +120,6 @@ crypto_codes = [
   "harmony",
   "fantom"
 ]
-crypto_codes = ["ethereum", "solana"]
 dict_all = {}
 dict_used = {}
 
@@ -130,10 +129,6 @@ for code in crypto_codes:
   threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
   threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
 run_threads(threads)
-
-# for code in crypto_codes:
-#   get_num_dapps(code, dict_all)
-#   get_used_dapps(code, dict_used)
 
 # print output
 print(dict_all)
