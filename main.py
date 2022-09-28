@@ -7,17 +7,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
 from threading import Thread
-
-# given list of elements with text, returns the greatest int in the texts
-def get_max_digit(elements):
-  digits = []
-  for el in elements:
-    if el.text.isdigit():
-      digits += [int(el.text)]
-  return max(digits)
   
 # given url to dappradar, finds number of dapps for that crypto
 def get_num_dapps(crypto_code, dict):
+  # given list of elements with text, returns the greatest int in the texts
+  def get_max_digit(elements):
+    digits = []
+    for el in elements:
+      if el.text.isdigit():
+        digits += [int(el.text)]
+    return max(digits)
+
   # create driver
   chrome_options = Options()
   # chrome_options.add_argument("--headless")
@@ -43,6 +43,14 @@ def get_num_dapps(crypto_code, dict):
   return
 
 def get_used_dapps(crypto_code, dict):
+  # given list of elements with text, returns the greatest int in the texts
+  def get_max_digit(elements):
+    digits = []
+    for el in elements:
+      if el.text.isdigit():
+        digits += [int(el.text)]
+    return max(digits)
+
   # create driver
   chrome_options = Options()
   # chrome_options.add_argument("--headless")
@@ -97,31 +105,35 @@ def run_threads(threads):
     run_threads(threads[7:])
 
 # input and output to threads
-# crypto_codes = [
-#   "ethereum",
-#   "solana",
-#   "avalanche",
-#   "binance-smart-chain",
-#   "tron",
-#   "algorand",
-#   "near",
-#   "flow",
-#   "polygon",
-#   "tezos",
-#   "eos",
-#   "harmony",
-#   "fantom"
-# ]
-crypto_codes = ["ethereum"]
+crypto_codes = [
+  "ethereum",
+  "solana",
+  "avalanche",
+  "binance-smart-chain",
+  "tron",
+  "algorand",
+  "near",
+  "flow",
+  "polygon",
+  "tezos",
+  "eos",
+  "harmony",
+  "fantom"
+]
+crypto_codes = ["ethereum", "solana"]
 dict_all = {}
 dict_used = {}
 
 # create threads and run with helper function
 threads = []
 for code in crypto_codes:
-  # threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
+  threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
   threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
 run_threads(threads)
+
+# for code in crypto_codes:
+#   get_num_dapps(code, dict_all)
+#   get_used_dapps(code, dict_used)
 
 # print output
 print(dict_all)
