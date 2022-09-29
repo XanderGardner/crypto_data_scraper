@@ -26,13 +26,19 @@ def get_num_dapps(crypto_code, dict):
   driver.maximize_window()
 
   # get url to last page
-  driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}")
-  nav_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
-  last_page = get_max_digit(nav_els)
+  try:
+    driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}")
+    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
+    last_page = get_max_digit(nav_els)
+  except:
+    print(f"not many dapps for {crypto_code}...")
+    last_page = 1
 
   # get num dapps from last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/{last_page}")
-  dapp_num_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-olbas.iVmbMh")))
+  WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-olbas.iVmbMh")))
+  time.sleep(2.0) # allow javascript to finish loading
+  dapp_num_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-olbas.iVmbMh")))
 
   num = get_max_digit(dapp_num_els)
 
@@ -61,23 +67,35 @@ def get_used_dapps(crypto_code, dict):
 
   # get url to last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
-  filter_btn = WebDriverWait(driver, 12).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ.elfFbJ.cyfpQG")))
+  filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ.elfFbJ.cyfpQG")))
   filter_btn.click()
-  apply_btn = WebDriverWait(driver, 12).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.bxXfRK")))
+  apply_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.bxXfRK")))
   apply_btn.click()
   time.sleep(2.0) # wait for filter to be applied
 
-  nav_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
-  last_page = get_max_digit(nav_els)
+  try:
+    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
+    last_page = get_max_digit(nav_els)
+  except:
+    print(f"not many dapps with users for {crypto_code}...")
+    last_page = 1
 
   # get num dapps from last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/{last_page}")
-  user_num_els = WebDriverWait(driver, 12).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-gCoyRa.TwgEd")))
+  rows = WebDriverWait(driver, 15).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-eKszNL.dYKdGj")))
   
+  row_data = []
+  for row in rows:
+    users = row.find_element(By.CLASS_NAME, "sc-gCoyRa.TwgEd")
+    number = row.find_element(By.CLASS_NAME, "sc-inRwDn.LrPBw")
+    row_data += [(users,number)]
+  # users: sc-gCoyRa TwgEd
+  # number: sc-inRwDn LrPBw
+
   # count num dapps with more than 1 user
   count = 0
-  for el in user_num_els:
-    if el.text.isdigit() and int(el.text) >= 1:
+  for dapp in row_data:
+    if dapp[1].text != "Ad" and dapp[0] and dapp[0].text != "0":
       count += 1
   num = 25 * (last_page - 1) + count
 
@@ -87,9 +105,9 @@ def get_used_dapps(crypto_code, dict):
   dict[crypto_code] = num
   return
 
-# run threads recursively in groups of 7
+# run threads recursively in groups of 6
 def run_threads(threads):
-  if len(threads) < 7:
+  if len(threads) < 6:
     # base case, run all
     for thread in threads:
       thread.start()
@@ -97,12 +115,12 @@ def run_threads(threads):
       thread.join()
     return
   else:
-    # run 8, then recurse on remaining
-    for i in range(7):
+    # run 6, then recurse on remaining
+    for i in range(6):
       threads[i].start()
-    for i in range(7):
+    for i in range(6):
       threads[i].join()
-    run_threads(threads[7:])
+    run_threads(threads[6:])
 
 # input and output to threads
 crypto_codes = [
