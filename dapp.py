@@ -67,9 +67,10 @@ def get_used_dapps(crypto_code, dict):
 
   # get url to last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
-  filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ.elfFbJ.cyfpQG")))
+  filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ")))
   filter_btn.click()
-  apply_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.bxXfRK")))
+  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-fgiXzq.emstOB")))
+  apply_btn = btn_div.find_element(By.CLASS_NAME, "sc-hKMtZM")
   apply_btn.click()
   time.sleep(2.0) # wait for filter to be applied
 
@@ -86,9 +87,12 @@ def get_used_dapps(crypto_code, dict):
   
   row_data = []
   for row in rows:
-    users = row.find_element(By.CLASS_NAME, "sc-gCoyRa.TwgEd")
-    number = row.find_element(By.CLASS_NAME, "sc-inRwDn.LrPBw")
-    row_data += [(users,number)]
+    tds = row.find_elements(By.TAG_NAME, "td")
+    if len(tds) >= 6:
+      users = tds[5].find_elements(By.TAG_NAME, "div")
+      numbers = tds[0]
+      if len(users) >= 2:
+        row_data += [(users[1], numbers)]
   # users: sc-gCoyRa TwgEd
   # number: sc-inRwDn LrPBw
 
@@ -149,5 +153,7 @@ for code in crypto_codes:
 run_threads(threads)
 
 # print output
+print("All dapps: ")
 print(dict_all)
+print("All dapps with users: ")
 print(dict_used)

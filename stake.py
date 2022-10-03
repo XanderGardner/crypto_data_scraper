@@ -83,5 +83,7 @@ for code in crypto_codes:
 run_threads(threads)
 
 # print output
+print("Staking yield: ")
 print(dict_yield)
+print("Percent of currency staked: ")
 print(dict_staked)
