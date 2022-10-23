@@ -69,7 +69,7 @@ def get_used_dapps(crypto_code, dict):
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
   filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ")))
   filter_btn.click()
-  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-fgiXzq.emstOB")))
+  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-kNCMYV")))
   apply_btn = btn_div.find_element(By.CLASS_NAME, "sc-hKMtZM")
   apply_btn.click()
   time.sleep(2.0) # wait for filter to be applied
@@ -152,8 +152,19 @@ for code in crypto_codes:
   threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
 run_threads(threads)
 
+# better formatting
+# (all, used)
+out = []
+for code in crypto_codes:
+  if code in dict_all and code in dict_used:
+    out += [(code, dict_all[code], dict_used[code])]
+  else:
+    out += [(code, None)]
+
 # print output
 print("All dapps: ")
 print(dict_all)
 print("All dapps with users: ")
 print(dict_used)
+print("better formatting (code, all, used)")
+print(out)
