@@ -23,3 +23,15 @@ Scrape data from stakingrewards. Gets ratio staked and staking yield for each cr
 ```
 python3 stake.py
 ```
+## Discord Continuous Scraping
+
+Set up a job to scrape every 12 hrs:
+source: https://towardsdatascience.com/how-to-easily-automate-your-python-scripts-on-mac-and-windows-459388c9cc94
+
+Create executable
+```
+pip install pyinstaller
+pyinstaller --onefile discord.py
+```
+Then use crontab for mac or task scheduler for windows
+
