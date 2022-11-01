@@ -14,6 +14,7 @@ pip install webdriver-manager
 
 ## Scripts
 
+(Currently has a bug)
 Scrape data from dappradar. Gets number of dapps and number of dapps with >= 1 user for each crypto:
 ```
 python3 dapp.py
@@ -23,6 +24,12 @@ Scrape data from stakingrewards. Gets ratio staked and staking yield for each cr
 ```
 python3 stake.py
 ```
+
+Scrape member data and online data from discord
+```
+python3 discord.py
+```
+
 ## Discord Continuous Scraping
 
 Set up a job to scrape every 6 hrs:
