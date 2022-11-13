@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
 from threading import Thread
+from collections import OrderedDict
   
 # given url to dappradar, finds number of dapps for that crypto
 def get_num_dapps(crypto_code, dict):
@@ -69,7 +70,7 @@ def get_used_dapps(crypto_code, dict):
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
   filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ")))
   filter_btn.click()
-  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-kNCMYV")))
+  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-joKenV")))
   apply_btn = btn_div.find_element(By.CLASS_NAME, "sc-hKMtZM")
   apply_btn.click()
   time.sleep(2.0) # wait for filter to be applied
@@ -126,45 +127,38 @@ def run_threads(threads):
       threads[i].join()
     run_threads(threads[6:])
 
-# input and output to threads
-crypto_codes = [
-  "ethereum",
-  "solana",
-  "avalanche",
-  "binance-smart-chain",
-  "tron",
-  "algorand",
-  "near",
-  "flow",
-  "polygon",
-  "tezos",
-  "eos",
-  "harmony",
-  "fantom"
-]
-dict_all = {}
-dict_used = {}
+def main():
+  # input and output to threads
+  crypto_codes = [
+    "ethereum",
+    "solana",
+    "avalanche",
+    "binance-smart-chain",
+    "tron",
+    "algorand",
+    "near",
+    "flow",
+    "polygon",
+    "tezos",
+    "eos",
+    "harmony",
+    "fantom"
+  ]
+  dict_all = OrderedDict()
+  dict_used = OrderedDict()
 
-# create threads and run with helper function
-threads = []
-for code in crypto_codes:
-  threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
-  threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
-run_threads(threads)
+  # create threads and run with helper function
+  threads = []
+  for code in crypto_codes:
+    dict_all[code] = []
+    dict_used[code] = []
+    threads += [Thread(target=get_num_dapps, args=(code, dict_all))]
+    threads += [Thread(target=get_used_dapps, args=(code, dict_used))]
+  run_threads(threads)
 
-# better formatting
-# (all, used)
-out = []
-for code in crypto_codes:
-  if code in dict_all and code in dict_used:
-    out += [(code, dict_all[code], dict_used[code])]
-  else:
-    out += [(code, None)]
+  # print output
+  print(f"All dapps: {dict_all}")
+  print(f"All dapps: {dict_used}")
 
-# print output
-print("All dapps: ")
-print(dict_all)
-print("All dapps with users: ")
-print(dict_used)
-print("better formatting (code, all, used)")
-print(out)
+if __name__ == "__main__":
+  main()
