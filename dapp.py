@@ -68,7 +68,8 @@ def get_used_dapps(crypto_code, dict):
 
   # get url to last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
-  filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ")))
+  filter_btn_class = "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ" # TODO: change dynamically
+  filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, filter_btn_class)))
   filter_btn.click()
   btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-joKenV")))
   apply_btn = btn_div.find_element(By.CLASS_NAME, "sc-hKMtZM")
