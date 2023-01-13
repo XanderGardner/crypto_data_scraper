@@ -9,6 +9,9 @@ import time
 from threading import Thread
 from collections import OrderedDict
   
+# TODO CHANGE DYNAMICALLY
+nav_els_class = "sc-eDWCr.hFKXSa"
+
 # given url to dappradar, finds number of dapps for that crypto
 def get_num_dapps(crypto_code, dict):
   # given list of elements with text, returns the greatest int in the texts
@@ -26,10 +29,14 @@ def get_num_dapps(crypto_code, dict):
   driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
   driver.maximize_window()
 
+  # TODO: change dynamically
+  
+  row_num_class = "sc-efhLOa"
+
   # get url to last page
   try:
     driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}")
-    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
+    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, nav_els_class)))
     last_page = get_max_digit(nav_els)
   except:
     print(f"not many dapps for {crypto_code}...")
@@ -37,9 +44,9 @@ def get_num_dapps(crypto_code, dict):
 
   # get num dapps from last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/{last_page}")
-  WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-olbas.iVmbMh")))
+  WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, row_num_class)))
   time.sleep(2.0) # allow javascript to finish loading
-  dapp_num_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-olbas.iVmbMh")))
+  dapp_num_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, row_num_class)))
 
   num = get_max_digit(dapp_num_els)
 
@@ -68,24 +75,32 @@ def get_used_dapps(crypto_code, dict):
 
   # get url to last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/1?greaterUser=1")
-  filter_btn_class = "sc-hKMtZM.gJGSuK.sc-gKXOVf.sc-bBXxYQ" # TODO: change dynamically
+  
+  # TODO: change dynamically
+  filter_btn_class = "sc-hLBbgP.fZhtXy.sc-gKPRtg.sc-cOxWqc"
+  btn_div_class = "sc-eAnmvA"
+  btn_apply_class = "sc-hLBbgP"
+
   filter_btn = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, filter_btn_class)))
   filter_btn.click()
-  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "sc-joKenV")))
-  apply_btn = btn_div.find_element(By.CLASS_NAME, "sc-hKMtZM")
+  btn_div = WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, btn_div_class)))
+  apply_btn = btn_div.find_element(By.CLASS_NAME, btn_apply_class)
   apply_btn.click()
   time.sleep(2.0) # wait for filter to be applied
 
+  # TODO: change dynamically
+  row_class = "sc-oZIhv.hFbnZp"
+
   try:
-    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-breuTD.malUw")))
+    nav_els = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, nav_els_class)))
     last_page = get_max_digit(nav_els)
   except:
-    print(f"not many dapps with users for {crypto_code}...")
+    print(f"2:not many dapps with users for {crypto_code}...")
     last_page = 1
 
   # get num dapps from last page
   driver.get(f"https://dappradar.com/rankings/protocol/{crypto_code}/{last_page}")
-  rows = WebDriverWait(driver, 15).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "sc-eKszNL.dYKdGj")))
+  rows = WebDriverWait(driver, 15).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, row_class)))
   
   row_data = []
   for row in rows:
